@@ -32,14 +32,32 @@ new class extends Component
 
         <div class="px-3">
             <x-nav-link :href="route('groups')" :active="request()->routeIs('groups')" class="w-full flex justify-start px-4 py-3" wire:navigate>
-                {{ __('Kumpulan Haji') }}
+                {{ __('Hajj Groups') }}
             </x-nav-link>
         </div>
 
-        <div class="px-3">
-            <x-nav-link :href="route('settings')" :active="request()->routeIs('settings')" class="w-full flex justify-start px-4 py-3" wire:navigate>
-                {{ __('Tetapan') }}
-            </x-nav-link>
+        <div x-data="{ open: {{ request()->routeIs(['permission-settings', 'role-settings']) ? 'true' : 'false' }} }" class="px-3">
+            <button @click="open = !open" class="w-full flex justify-between items-center px-4 py-3 text-gray-600 hover:text-gray-900 transition">
+                <span>{{ __('Settings') }}</span>
+                <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+
+            <div x-show="open" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 -translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0"
+                x-transition:leave-end="opacity-0 -translate-y-2" class="mt-1 space-y-1">
+                <x-nav-link :href="route('permission-settings')" :active="request()->routeIs('permission-settings')" class="w-full flex justify-start px-8 py-3" wire:navigate>
+                    {{ __('Permissions') }}
+                </x-nav-link>
+
+                <x-nav-link :href="route('role-settings')" :active="request()->routeIs('role-settings')" class="w-full flex justify-start px-8 py-3" wire:navigate>
+                    {{ __('Roles') }}
+                </x-nav-link>
+            </div>
         </div>
     </nav>
 
