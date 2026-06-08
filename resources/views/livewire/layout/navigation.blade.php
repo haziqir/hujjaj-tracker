@@ -36,7 +36,7 @@ new class extends Component
             </x-nav-link>
         </div>
 
-        <div x-data="{ open: {{ request()->routeIs(['permission-settings', 'role-settings']) ? 'true' : 'false' }} }" class="px-3">
+        <div x-data="{ open: {{ request()->routeIs(['permission-settings', 'role-settings', 'roles.edit', 'user-settings', 'users.create']) ? 'true' : 'false' }} }" class="px-3">
             <button @click="open = !open" class="w-full flex justify-between items-center px-4 py-3 text-gray-600 hover:text-gray-900 transition">
                 <span>{{ __('Settings') }}</span>
                 <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,12 +50,16 @@ new class extends Component
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0"
                 x-transition:leave-end="opacity-0 -translate-y-2" class="mt-1 space-y-1">
-                <x-nav-link :href="route('permission-settings')" :active="request()->routeIs('permission-settings')" class="w-full flex justify-start px-8 py-3" wire:navigate>
-                    {{ __('Permissions') }}
+                <x-nav-link :href="route('user-settings')" :active="request()->routeIs('user-settings', 'users.create')" class="w-full flex justify-start px-8 py-3" wire:navigate>
+                    {{ __('Users') }}
                 </x-nav-link>
 
-                <x-nav-link :href="route('role-settings')" :active="request()->routeIs('role-settings')" class="w-full flex justify-start px-8 py-3" wire:navigate>
+                <x-nav-link :href="route('role-settings')" :active="request()->routeIs('role-settings', 'roles.edit')" class="w-full flex justify-start px-8 py-3" wire:navigate>
                     {{ __('Roles') }}
+                </x-nav-link>
+
+                <x-nav-link :href="route('permission-settings')" :active="request()->routeIs('permission-settings')" class="w-full flex justify-start px-8 py-3" wire:navigate>
+                    {{ __('Permissions') }}
                 </x-nav-link>
             </div>
         </div>
