@@ -40,4 +40,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(Assignment::class, 'staff_id');
     }
+
+    public function hasPermission($permissionName): bool
+    {
+        return $this->roles()->whereHas('permissions', function($query) use ($permissionName) {
+            $query->where('name', $permissionName);
+        })->exists();
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class,'user_roles')->withPivot('user_id', 'role_id');
+    }
 }

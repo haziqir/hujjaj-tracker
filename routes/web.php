@@ -1,5 +1,7 @@
 <?php
 
+use App\Livewire\CreateUser;
+use App\Livewire\EditRole;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -19,6 +21,14 @@ Route::view('permission-settings', 'permission-settings')
 Route::view('role-settings', 'role-settings')
     ->middleware(['auth', 'verified'])
     ->name('role-settings');
+
+Route::view('user-settings', 'user-settings')
+    ->middleware(['auth', 'verified'])
+    ->name('user-settings');
+
+Route::get('/roles/{role}/edit', EditRole::class)->name('roles.edit');
+
+Route::get('/users/create', CreateUser::class)->name('users.create');
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
