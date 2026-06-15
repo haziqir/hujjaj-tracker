@@ -34,13 +34,13 @@ class CreateUser extends Component
 
         $user->roles()->attach($this->selectedRole);
 
-        $this->dispatch('swal', [
+        session()->flash('swal', [
             'title' => 'Success!',
             'text' => 'User created successfully!',
-            'icon' => 'success'
+            'icon' => 'success',
         ]);
 
-        return redirect()->route('user-settings');
+        return redirect()->route('users.index');
     }
 
     public function render()

@@ -35,6 +35,11 @@ new class extends Component
         $this->reset('current_password', 'password', 'password_confirmation');
 
         $this->dispatch('password-updated');
+        $this->dispatch('swal', [
+            'title' => 'Success!',
+            'text' => 'Password updated successfully!',
+            'icon' => 'success',
+        ]);
     }
 }; ?>
 

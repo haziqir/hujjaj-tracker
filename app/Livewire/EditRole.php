@@ -24,7 +24,12 @@ class EditRole extends Component
         $this->role->update(['name' => $this->name]);
         $this->role->permissions()->sync($this->selectedPermissions);
 
-        session()->flash('message', 'Permissions updated successfully!');
+        session()->flash('swal', [
+            'title' => 'Success!',
+            'text' => 'Role permissions updated successfully!',
+            'icon' => 'success',
+        ]);
+
         return redirect()->route('role-settings');
     }
 

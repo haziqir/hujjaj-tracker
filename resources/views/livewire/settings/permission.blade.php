@@ -3,9 +3,12 @@
 use App\Models\Permission;
 use Livewire\Volt\Component;
 use Livewire\Attributes\Validate;
+use Livewire\WithPagination;
 
 new class extends Component
 {
+    use WithPagination;
+
     #[Validate('required|unique:permissions,name|min:3')]
     public string $name = '';
 
@@ -18,11 +21,20 @@ new class extends Component
         if ($this->editingPermission) {
             $this->editingPermission->update(['name' => $this->name]);
             $this->editingPermission = null;
+            $message = 'Permission updated successfully!';
         } else {
             Permission::create(['name' => $this->name]);
+            $message = 'Permission created successfully!';
         }
 
         $this->reset('name');
+        $this->resetPage();
+
+        $this->dispatch('swal', [
+            'title' => 'Success!',
+            'text' => $message,
+            'icon' => 'success',
+        ]);
     }
 
     public function edit(Permission $permission): void
@@ -40,12 +52,19 @@ new class extends Component
     public function delete(Permission $permission): void
     {
         $permission->delete();
+        $this->resetPage();
+
+        $this->dispatch('swal', [
+            'title' => 'Deleted!',
+            'text' => 'Permission deleted successfully!',
+            'icon' => 'success',
+        ]);
     }
 
     public function with(): array
     {
         return [
-            'permissions' => Permission::all(),
+            'permissions' => Permission::orderBy('id')->paginate(10),
         ];
     }
 }; ?>
@@ -77,7 +96,7 @@ new class extends Component
         <tbody>
             @foreach($permissions as $permission)
                 <tr>
-                    <td class="p-2 border border-gray-300">{{ $loop->iteration }}</td>
+                    <td class="p-2 border border-gray-300">{{ $permissions->firstItem() + $loop->index }}</td>
                     <td class="p-2 border border-gray-300">{{ $permission->name }}</td>
                     <td class="p-2 border border-gray-300 flex gap-2">
                         <button wire:click="edit({{ $permission->id }})" class="text-blue-600 hover:text-blue-800" title="Edit">
@@ -97,4 +116,8 @@ new class extends Component
             @endforeach
         </tbody>
     </table>
+
+    <div class="mt-4 flex justify-end">
+        {{ $permissions->links('vendor.pagination.custom') }}
+    </div>
 </section>
