@@ -11,6 +11,8 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -35,5 +37,31 @@
                 </main>
             </div>
         </div>
+
+        <script>
+            document.addEventListener('livewire:init', () => {
+                Livewire.on('swal', (event) => {
+                    const options = Array.isArray(event) ? event[0] : event;
+
+                    Swal.fire({
+                        title: options.title,
+                        text: options.text,
+                        icon: options.icon ?? 'success',
+                        timer: options.timer ?? 2000,
+                        showConfirmButton: options.showConfirmButton ?? false,
+                    });
+                });
+            });
+
+            @if (session('swal'))
+                Swal.fire({
+                    title: @js(session('swal.title')),
+                    text: @js(session('swal.text')),
+                    icon: @js(session('swal.icon', 'success')),
+                    timer: @js(session('swal.timer', 2000)),
+                    showConfirmButton: @js(session('swal.showConfirmButton', false)),
+                });
+            @endif
+        </script>
     </body>
 </html>

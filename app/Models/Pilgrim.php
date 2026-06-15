@@ -7,9 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['name','passport_no','gender','age','group_id','hotel_id','emergency_contact'])]
+#[Fillable(['user_id','name','passport_no','gender','age','group_id','hotel_id','emergency_contact'])]
 class Pilgrim extends Model
 {
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);

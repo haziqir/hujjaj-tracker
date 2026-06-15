@@ -3,9 +3,12 @@
 use App\Models\Role;
 use Livewire\Volt\Component;
 use Livewire\Attributes\Validate;
+use Livewire\WithPagination;
 
 new class extends Component
 {
+    use WithPagination;
+
     #[Validate('required|unique:roles,name|min:3')]
     public string $name = '';
 
@@ -18,11 +21,20 @@ new class extends Component
         if ($this->editingRole) {
             $this->editingRole->update(['name' => $this->name]);
             $this->editingRole = null;
+            $message = 'Role updated successfully!';
         } else {
             Role::create(['name' => $this->name]);
+            $message = 'Role created successfully!';
         }
 
         $this->reset('name');
+        $this->resetPage();
+
+        $this->dispatch('swal', [
+            'title' => 'Success!',
+            'text' => $message,
+            'icon' => 'success',
+        ]);
     }
 
     public function edit(Role $role): void
@@ -40,12 +52,13 @@ new class extends Component
     public function delete(Role $role): void
     {
         $role->delete();
+        $this->resetPage();
     }
 
     public function with(): array
     {
         return [
-            'roles' => Role::all(),
+            'roles' => Role::orderBy('id')->paginate(10),
         ];
     }
 }; ?>
@@ -77,7 +90,7 @@ new class extends Component
         <tbody>
             @foreach($roles as $role)
                 <tr>
-                    <td class="p-2 border border-gray-300">{{ $loop->iteration }}</td>
+                    <td class="p-2 border border-gray-300">{{ $roles->firstItem() + $loop->index }}</td>
                     <td class="p-2 border border-gray-300">{{ $role->name }}</td>
                     <td class="p-2 border border-gray-300 flex gap-2">
                         <a href="{{ route('roles.edit', $role->id) }}" class="text-blue-600 hover:text-blue-800" title="Edit">
@@ -97,4 +110,8 @@ new class extends Component
             @endforeach
         </tbody>
     </table>
+
+    <div class="mt-4 flex justify-end">
+        {{ $roles->links('vendor.pagination.custom') }}
+    </div>
 </section>
