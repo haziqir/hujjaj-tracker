@@ -20,7 +20,7 @@ class CreateUser extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'phone' => 'required|integer|min:10',
+            'phone' => 'required|min:10',
             'password' => 'required|min:3',
             'selectedRole' => 'required|exists:roles,id',
         ]);

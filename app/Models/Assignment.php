@@ -9,6 +9,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable(['alert_id','staff_id','assigned_at','completed_at'])]
 class Assignment extends Model
 {
+    protected function casts(): array
+    {
+        return [
+            'assigned_at' => 'datetime',
+            'completed_at' => 'datetime',
+        ];
+    }
+
     public function alert(): BelongsTo
     {
         return $this->belongsTo(SosAlert::class, 'alert_id');

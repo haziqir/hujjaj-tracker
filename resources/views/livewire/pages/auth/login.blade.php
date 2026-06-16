@@ -20,7 +20,12 @@ new #[Layout('layouts.guest')] class extends Component
 
         Session::regenerate();
 
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+        $user = auth()->user();
+        $dashboardRoute = $user->roles()->whereIn('name', ['super-admin', 'group-leader', 'staff'])->exists()
+            ? 'dashboard'
+            : 'pilgrims.dashboard';
+
+        $this->redirect(route($dashboardRoute, absolute: false), navigate: true);
     }
 }; ?>
 
