@@ -195,7 +195,6 @@ new class extends Component
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900">Pilgrim Management</h2>
-        <p class="mt-1 text-sm text-gray-500">Create a login account and pilgrim profile in one form.</p>
     </header>
 
     <form wire:submit="save" class="mt-6 rounded border border-gray-200 bg-white p-4">

@@ -3,17 +3,28 @@
 use App\Livewire\CreateUser;
 use App\Livewire\EditRole;
 use App\Livewire\EditUser;
+use App\Http\Controllers\GroupLocationController;
+use App\Http\Controllers\PilgrimLocationController;
+use App\Http\Controllers\PilgrimSosController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 
 Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'role:super-admin,group-leader,staff'])
     ->name('dashboard');
 
 Route::view('groups', 'groups')
     ->middleware(['auth', 'verified'])
     ->name('groups');
+
+Route::view('my-group-location', 'groups.location')
+    ->middleware(['auth', 'verified', 'role:group-leader'])
+    ->name('groups.location');
+
+Route::post('my-group-location', [GroupLocationController::class, 'store'])
+    ->middleware(['auth', 'verified', 'role:group-leader'])
+    ->name('groups.location.store');
 
 Route::view('pilgrims', 'pilgrims.index')
     ->middleware(['auth', 'verified'])
@@ -22,6 +33,30 @@ Route::view('pilgrims', 'pilgrims.index')
 Route::view('my-pilgrim-profile', 'pilgrims.profile')
     ->middleware(['auth', 'verified'])
     ->name('pilgrims.profile');
+
+Route::view('pilgrim-dashboard', 'pilgrims.dashboard')
+    ->middleware(['auth', 'verified', 'role:pilgrim'])
+    ->name('pilgrims.dashboard');
+
+Route::post('pilgrim-dashboard/sos', [PilgrimSosController::class, 'store'])
+    ->middleware(['auth', 'verified', 'role:pilgrim'])
+    ->name('pilgrims.sos.store');
+
+Route::view('sos-alerts', 'sos-alerts.index')
+    ->middleware(['auth', 'verified'])
+    ->name('sos-alerts.index');
+
+Route::view('zones', 'zones.index')
+    ->middleware(['auth', 'verified'])
+    ->name('zones.index');
+
+Route::view('my-location', 'locations.my-location')
+    ->middleware(['auth', 'verified'])
+    ->name('locations.my');
+
+Route::post('my-location', [PilgrimLocationController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('locations.store');
 
 Route::view('hotels', 'hotels.index')
     ->middleware(['auth', 'verified'])

@@ -24,17 +24,29 @@ new class extends Component
     </div>
 
     <nav class="flex-1 overflow-y-auto py-4 space-y-1">
-        <div class="px-3">
-            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="w-full flex justify-start px-4 py-3" wire:navigate>
-                {{ __('Dashboard') }}
-            </x-nav-link>
-        </div>
+        @if (auth()->user()->hasPermission('view-staff-dashboard'))
+            <div class="px-3">
+                <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="w-full flex justify-start px-4 py-3" wire:navigate>
+                    {{ __('Dashboard') }}
+                </x-nav-link>
+            </div>
+        @endif
 
-        <div class="px-3">
-            <x-nav-link :href="route('groups')" :active="request()->routeIs('groups')" class="w-full flex justify-start px-4 py-3" wire:navigate>
-                {{ __('Hajj Groups') }}
-            </x-nav-link>
-        </div>
+        @if (auth()->user()->hasPermission('manage-groups'))
+            <div class="px-3">
+                <x-nav-link :href="route('groups')" :active="request()->routeIs('groups')" class="w-full flex justify-start px-4 py-3" wire:navigate>
+                    {{ __('Hajj Groups') }}
+                </x-nav-link>
+            </div>
+        @endif
+
+        @if (auth()->user()->roles()->where('name', 'group-leader')->exists())
+            <div class="px-3">
+                <x-nav-link :href="route('groups.location')" :active="request()->routeIs('groups.location')" class="w-full flex justify-start px-4 py-3" wire:navigate>
+                    {{ __('My Group Location') }}
+                </x-nav-link>
+            </div>
+        @endif
 
         @if (auth()->user()->hasPermission('view-pilgrim-list'))
             <div class="px-3">
@@ -46,8 +58,20 @@ new class extends Component
 
         @if (auth()->user()->hasPermission('view-my-pilgrim-profile'))
             <div class="px-3">
+                <x-nav-link :href="route('pilgrims.dashboard')" :active="request()->routeIs('pilgrims.dashboard')" class="w-full flex justify-start px-4 py-3" wire:navigate>
+                    {{ __('Dashboard') }}
+                </x-nav-link>
+            </div>
+
+            <div class="px-3">
                 <x-nav-link :href="route('pilgrims.profile')" :active="request()->routeIs('pilgrims.profile')" class="w-full flex justify-start px-4 py-3" wire:navigate>
                     {{ __('My Pilgrim Profile') }}
+                </x-nav-link>
+            </div>
+
+            <div class="px-3">
+                <x-nav-link :href="route('locations.my')" :active="request()->routeIs('locations.my')" class="w-full flex justify-start px-4 py-3" wire:navigate>
+                    {{ __('My Location') }}
                 </x-nav-link>
             </div>
         @endif
@@ -56,6 +80,22 @@ new class extends Component
             <div class="px-3">
                 <x-nav-link :href="route('hotels.index')" :active="request()->routeIs('hotels.index')" class="w-full flex justify-start px-4 py-3" wire:navigate>
                     {{ __('Hotels') }}
+                </x-nav-link>
+            </div>
+        @endif
+
+        @if (auth()->user()->hasPermission('view-sos-alert') || auth()-user()->hasPermission('resolve-sos-alert'))
+            <div class="px-3">
+                <x-nav-link :href="route('sos-alerts.index')" :active="request()->routeIs('sos-alerts.index')" class="w-full flex justify-start px-4 py-3" wire:navigate>
+                    {{ __('SOS Alerts') }}
+                </x-nav-link>
+            </div>
+        @endif
+
+        @if (auth()->user()->hasPermission('manage-zones'))
+            <div class="px-3">
+                <x-nav-link :href="route('zones.index')" :active="request()->routeIs('zones.index')" class="w-full flex justify-start px-4 py-3" wire:navigate>
+                    {{ __('Geofencing Zones') }}
                 </x-nav-link>
             </div>
         @endif
@@ -99,20 +139,4 @@ new class extends Component
         @endif
     </nav>
 
-    <div class="p-4 border-t border-gray-200 space-y-2">
-        <div class="px-2 pb-2">
-            <div class="font-medium text-base text-gray-800">{{ auth()->user()->name ?? '-' }}</div>
-            <div class="font-medium text-sm text-gray-500">{{ auth()->user()->email ?? '-' }}</div>
-        </div>
-
-        <x-dropdown-link :href="route('profile')" wire:navigate>
-            {{ __('Profile') }}
-        </x-dropdown-link>
-
-        <button wire:click="logout" class="w-full text-start">
-            <x-dropdown-link>
-                {{ __('Log Out') }}
-            </x-dropdown-link>
-        </button>
-    </div>
 </div>
