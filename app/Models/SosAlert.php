@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-#[Fillable(['pilgrim_id','latitude','longitude','status'])]
+#[Fillable(['pilgrim_id','latitude','longitude','status','source','trigger_reason'])]
 class SosAlert extends Model
 {
     protected function casts(): array

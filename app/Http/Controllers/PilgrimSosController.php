@@ -3,11 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\SosAlert;
+use App\Services\SosAlertNotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PilgrimSosController extends Controller
 {
+    public function __construct(private readonly SosAlertNotificationService $notifications)
+    {
+    }
+
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -28,7 +33,11 @@ class PilgrimSosController extends Controller
             'latitude' => $validated['latitude'],
             'longitude' => $validated['longitude'],
             'status' => 'pending',
+            'source' => 'manual',
+            'trigger_reason' => 'Manual SOS button pressed.',
         ]);
+
+        $this->notifications->notifyCreated($alert);
 
         return response()->json([
             'message' => 'SOS alert created successfully.',
