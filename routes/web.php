@@ -50,6 +50,10 @@ Route::view('zones', 'zones.index')
     ->middleware(['auth', 'verified'])
     ->name('zones.index');
 
+Route::view('notifications', 'notifications.index')
+    ->middleware(['auth', 'verified'])
+    ->name('notifications.index');
+
 Route::view('my-location', 'locations.my-location')
     ->middleware(['auth', 'verified'])
     ->name('locations.my');

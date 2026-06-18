@@ -4,6 +4,7 @@ use App\Models\Assignment;
 use App\Models\SosAlert;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Url;
 use Livewire\Volt\Component;
 use Livewire\WithPagination;
 
@@ -11,6 +12,7 @@ new class extends Component
 {
     use WithPagination;
 
+    #[Url]
     public string $status = 'active';
     public string $search = '';
     public array $staffSelections = [];
@@ -233,12 +235,16 @@ new class extends Component
             ->when($this->status === 'active', fn ($query) => $query->whereIn('status', ['pending', 'assigned']))
             ->when(in_array($this->status, ['pending', 'assigned', 'resolved'], true), fn ($query) => $query->where('status', $this->status))
             ->when($search !== '', function ($query) use ($search) {
-                $query->whereHas('pilgrim', function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%")
-                        ->orWhere('passport_no', 'like', "%{$search}%")
-                        ->orWhere('emergency_contact', 'like', "%{$search}%")
-                        ->orWhereHas('group', fn ($query) => $query->where('group_name', 'like', "%{$search}%"))
-                        ->orWhereHas('hotel', fn ($query) => $query->where('hotel_name', 'like', "%{$search}%"));
+                $query->where(function ($query) use ($search) {
+                    $query->where('source', 'like', "%{$search}%")
+                        ->orWhere('trigger_reason', 'like', "%{$search}%")
+                        ->orWhereHas('pilgrim', function ($query) use ($search) {
+                            $query->where('name', 'like', "%{$search}%")
+                                ->orWhere('passport_no', 'like', "%{$search}%")
+                                ->orWhere('emergency_contact', 'like', "%{$search}%")
+                                ->orWhereHas('group', fn ($query) => $query->where('group_name', 'like', "%{$search}%"))
+                                ->orWhereHas('hotel', fn ($query) => $query->where('hotel_name', 'like', "%{$search}%"));
+                        });
                 });
             })
             ->latest()
@@ -321,6 +327,7 @@ new class extends Component
                     <th class="p-2 border border-gray-300">Hotel</th>
                     <th class="p-2 border border-gray-300">Emergency Contact</th>
                     <th class="p-2 border border-gray-300">Location</th>
+                    <th class="p-2 border border-gray-300">Source</th>
                     <th class="p-2 border border-gray-300">Status</th>
                     <th class="p-2 border border-gray-300">Assigned Staff</th>
                     <th class="p-2 border border-gray-300">Action</th>
@@ -342,6 +349,12 @@ new class extends Component
                             <a class="text-blue-600 hover:text-blue-800" href="https://www.google.com/maps?q={{ $alert->latitude }},{{ $alert->longitude }}" target="_blank">
                                 {{ $alert->latitude }}, {{ $alert->longitude }}
                             </a>
+                        </td>
+                        <td class="p-2 border border-gray-300">
+                            <span class="rounded px-2 py-1 text-xs font-medium {{ $alert->source === 'auto' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800' }}">
+                                {{ ucfirst($alert->source ?? 'manual') }}
+                            </span>
+                            <div class="mt-1 max-w-52 text-xs text-gray-500">{{ $alert->trigger_reason ?? '-' }}</div>
                         </td>
                         <td class="p-2 border border-gray-300">
                             @if ($alert->status === 'pending')
@@ -390,7 +403,7 @@ new class extends Component
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="10" class="p-4 text-center text-gray-500 border border-gray-300">
+                        <td colspan="11" class="p-4 text-center text-gray-500 border border-gray-300">
                             No SOS alerts found.
                         </td>
                     </tr>
@@ -444,6 +457,11 @@ new class extends Component
                 <div class="rounded border border-gray-200 p-3">
                     <div class="text-sm font-medium text-gray-500">Status</div>
                     <div class="mt-1 font-semibold text-gray-900">{{ ucfirst($viewingAlert->status) }}</div>
+                </div>
+                <div class="rounded border border-gray-200 p-3">
+                    <div class="text-sm font-medium text-gray-500">Source</div>
+                    <div class="mt-1 font-semibold text-gray-900">{{ ucfirst($viewingAlert->source ?? 'manual') }}</div>
+                    <div class="mt-1 text-sm text-gray-500">{{ $viewingAlert->trigger_reason ?? '-' }}</div>
                 </div>
                 <div class="rounded border border-gray-200 p-3">
                     <div class="text-sm font-medium text-gray-500">Current Staff</div>
